@@ -2,5 +2,5 @@
 blobstore:
   provider: s3
   options:
-    bucket_name: minio-bosh-blobs
-    region: us-west-2
+    bucket_name: minio-bosh-blobstore
+    region: us-east-1
