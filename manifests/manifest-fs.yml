@@ -3,7 +3,7 @@ name: minio
 director_uuid: 63ddb6a6-d6fe-40e1-b16b-2ff6b2034c79
 
 releases:
-- name: minio-release-1
+- name: minio
   version: latest
 
 networks:
