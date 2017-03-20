@@ -1,0 +1,5 @@
+check process monit-server
+  with pidfile /var/vcap/sys/run/minio/pid
+  start program "/var/vcap/jobs/minio/bin/ctl start"
+  stop program "/var/vcap/jobs/minio/bin/ctl stop"
+  group vcap

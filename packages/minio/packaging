@@ -1,0 +1,4 @@
+set -eux
+
+cp -a minio/minio ${BOSH_INSTALL_TARGET}
+chmod +x ${BOSH_INSTALL_TARGET}/minio

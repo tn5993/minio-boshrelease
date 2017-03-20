@@ -1,0 +1,31 @@
+#!/bin/bash
+
+RUN_DIR=/var/vcap/sys/run/minio
+LOG_DIR=/var/vcap/sys/log/minio
+CONFIG_DIR=/var/vcap/jobs/minio/config
+PIDFILE=${RUN_DIR}/pid
+
+case $1 in
+
+  start)
+    mkdir -p $RUN_DIR $LOG_DIR
+    chown -R vcap:vcap $RUN_DIR $LOG_DIR $CONFIG_DIR
+
+    echo $$ > $PIDFILE
+
+    cd /var/vcap/packages/minio
+
+    exec ./minio -C $CONFIG_DIR server --address ':<%= p("port") %>' <%= p("svr_args") %>
+
+    ;;
+
+  stop)
+    kill -9 `cat $PIDFILE`
+    rm -f $PIDFILE
+
+    ;;
+
+  *)
+    echo "Usage: ctl {start|stop}" ;;
+
+esac
