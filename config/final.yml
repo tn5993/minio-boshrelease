@@ -4,3 +4,4 @@ blobstore:
   options:
     bucket_name: minio-bosh-blobstore
     region: us-east-1
+final_name: minio
