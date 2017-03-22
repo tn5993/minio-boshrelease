@@ -1,7 +1,7 @@
 # .bosh-minio-release
 Temporary repo for developing a Bosh Minio release.
 
-# How to
+# How to use this release
 
 ## 0. Install Bosh CLI and BOSH Lite
 
@@ -37,9 +37,9 @@ bosh create release --force
 bosh upload release
 ```
 
-## 4. Create manifest from Example
+## 4. Create manifest from examples files in `manifests`
 
-Copy a manifest in the `manifest/` directory and replace the
+Copy a manifest in the `manifests/` directory and replace the
 `director_uuid` field with the one from your BOSH director.
 
 The UUID to put in the manifest can be found with:
@@ -64,7 +64,7 @@ bosh deploy
 ```
 
 With the settings in the example manifest, you should be able to
-access the minio server at your `http://10.244.0.2:9001`, with the mc
+access the minio server at `http://10.244.0.2:9001`, with the mc
 tool:
 
 ``` shell
@@ -75,4 +75,99 @@ mc config host add boshminio http://10.244.0.2:9001 minio minio123
 mc ls boshminio
 mc mb boshminio/bucket
 mc cp /etc/issue boshminio/bucket/
+```
+
+For deploying a distributed version, just set the number of desired
+instances in the manifest file along with that many `static_ips` in
+the `jobs` section of the manifest, as shown in the example manifest
+at `manifests/manifest-dist-4node.yml`.
+
+With the settings in that example manifest, you can test the
+deployment with mc as follows:
+
+``` shell
+mc config host add boshminio1 http://10.244.0.2:9001 minio minio123
+mc config host add boshminio2 http://10.244.0.3:9001 minio minio123
+mc config host add boshminio3 http://10.244.0.4:9001 minio minio123
+mc config host add boshminio4 http://10.244.0.5:9001 minio minio123
+
+mc mb boshminio1/bucket # Create a bucket
+mc ls boshminio{1..4} # List all the 4 minio endpoints. Should see the
+                      # bucket printed four times.
+```
+
+# How to update this release with a newer version of Minio binary
+
+The latest version of the Minio binary for amd64 Linux is available at
+https://dl.minio.io/server/minio/release/linux-amd64/
+
+Pick the file name that has the version suffix such as:
+
+``` shell
+MINIO_BIN_NAME=minio.RELEASE.2017-03-16T21-50-32Z
+```
+
+Download it locally and verify the shasum.
+
+
+## 1. Create new package
+
+``` shell
+$ bosh generate package ${MINIO_BIN_NAME}
+
+$ tree packages/${MINIO_BIN_NAME}/
+packages/minio.RELEASE.2017-03-16T21-50-32Z/
+├── packaging
+├── pre_packaging
+└── spec
+
+0 directories, 3 files
+
+```
+
+## 2. Update `packaging` and `spec` files in the generated package directory
+
+The update just replaces the name of the package used in the
+`packaging` script and in the `spec` files.
+
+## 3. Update blob for new package
+
+``` shell
+bosh add blob <local-path> <pkg-name>
+```
+
+## 4. Update `minio-server` job
+
+In the job directory, update the dependencies listed in the
+`jobs/minio-server/spec` file, similar to:
+
+``` shell
+packages:
+  - minio.RELEASE.2017-03-16T21-50-32Z
+
+```
+
+Also, in the template script `jobs/minio-server/templates/ctl.erb` update the
+BINPATH variable with the new version name of the minio package.
+
+``` shell
+BINPATH=/var/vcap/packages/minio.RELEASE.2017-03-16T21-50-32Z
+
+```
+
+## 5. Try it out
+
+``` shell
+bosh create release --force
+bosh upload release # also upload stemcell if needed
+bosh deployment manifests/manifest-fs/yml # Set manifest
+bosh deploy
+```
+
+Test if the deployment worked and finally, if everything is working as
+expected, create a final release with:
+
+``` shell
+bosh upload blobs # This requires you to configure s3 creds in config/private.yml
+bosh create release --final
 ```
