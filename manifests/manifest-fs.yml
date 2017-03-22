@@ -1,5 +1,5 @@
 ---
-name: minio
+name: minio-singlenode-deploy
 director_uuid: 63ddb6a6-d6fe-40e1-b16b-2ff6b2034c79
 
 releases:
@@ -35,9 +35,9 @@ update:
   max_in_flight: 2
 
 jobs:
-- name: minio
+- name: minio-server
   templates:
-  - name: minio
+  - name: minio-server
   instances: 1
   resource_pool: default
   persistent_disk: 10000
@@ -51,4 +51,3 @@ jobs:
       secretkey: minio123
     region: us-east-1
     port: 9001
-    svr_args: "/var/vcap/store/minio"

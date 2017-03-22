@@ -35,12 +35,12 @@ update:
   max_in_flight: 2
 
 jobs:
-- name: minio-dist-job
+- name: minio-server
   templates:
-  - name: minio-dist
+  - name: minio-server
   instances: 4
   resource_pool: default
-  # persistent_disk: 5000
+  persistent_disk: 10000
   networks:
   - name: default
     static_ips:
@@ -54,4 +54,3 @@ jobs:
       secretkey: minio123
     region: us-east-1
     port: 9001
-    svr_args: "http://10.244.0.2:9001/var/vcap/store/minio http://10.244.0.3:9001/var/vcap/store/minio http://10.244.0.4:9001/var/vcap/store/minio http://10.244.0.5:9001/var/vcap/store/minio"

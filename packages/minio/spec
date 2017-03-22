@@ -1,8 +1,0 @@
----
-name: minio
-
-dependencies: []
-
-files:
-- minio/minio # From https://dl.minio.io/server/minio/release/linux-amd64/minio
-
