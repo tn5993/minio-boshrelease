@@ -16,7 +16,7 @@ case $1 in
 
     exec /var/vcap/packages/minio/minio server -C $CONFIG_DIR \
          --address ':<%= p("port") %>' \
-         <% link("minio").instances.map { |instance| %> "http://<%= instance.address %>${STORE_DIR}/" <% } %> \
+         <% if link("minio").instances.length > 1 %><% link("minio").instances.map { |instance| %> "http://<%= instance.address %>${STORE_DIR}/" <% } %><% else %>${STORE_DIR}/<% end %> \
          >> ${LOG_DIR}/minio-dist.stdout.log \
          2>> ${LOG_DIR}/minio-dist.stderr.log
 
