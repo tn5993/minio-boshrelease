@@ -4,7 +4,7 @@ RUN_DIR=/var/vcap/sys/run/minio-dist
 LOG_DIR=/var/vcap/sys/log/minio-dist
 CONFIG_DIR=/var/vcap/jobs/minio-dist/config
 STORE_DIR=/var/vcap/store/minio-dist
-PIDFILE=${RUN_DIR}/minio-dist.pid
+PIDFILE=${RUN_DIR}/pid
 
 mkdir -p ${RUN_DIR} ${LOG_DIR} ${CONFIG_DIR} ${STORE_DIR}
 chown -R vcap:vcap $RUN_DIR $LOG_DIR $CONFIG_DIR ${STORE_DIR}
