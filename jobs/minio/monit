@@ -1,4 +1,4 @@
-check process monit-server
+check process minio
   with pidfile /var/vcap/sys/run/minio/pid
   start program "/var/vcap/jobs/minio/bin/ctl start"
   stop program "/var/vcap/jobs/minio/bin/ctl stop"
