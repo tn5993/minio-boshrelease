@@ -1,5 +1,5 @@
 ---
-name: minio
+name: minio-dist-deploy
 director_uuid: 63ddb6a6-d6fe-40e1-b16b-2ff6b2034c79
 
 releases:
@@ -35,12 +35,12 @@ update:
   max_in_flight: 2
 
 jobs:
-- name: minio
+- name: minio-dist-job
   templates:
-  - name: minio
+  - name: minio-dist
   instances: 4
   resource_pool: default
-  persistent_disk: 10000
+  # persistent_disk: 5000
   networks:
   - name: default
     static_ips:

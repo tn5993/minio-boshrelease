@@ -1,0 +1,35 @@
+#!/bin/bash
+
+RUN_DIR=/var/vcap/sys/run/minio-dist
+LOG_DIR=/var/vcap/sys/log/minio-dist
+CONFIG_DIR=/var/vcap/jobs/minio-dist/config
+STORE_DIR=/var/vcap/store/minio-dist
+PIDFILE=${RUN_DIR}/minio-dist.pid
+
+mkdir -p ${RUN_DIR} ${LOG_DIR} ${CONFIG_DIR} ${STORE_DIR}
+chown -R vcap:vcap $RUN_DIR $LOG_DIR $CONFIG_DIR ${STORE_DIR}
+
+case $1 in
+
+  start)
+    echo $$ > $PIDFILE
+
+    exec /var/vcap/packages/minio/minio server -C $CONFIG_DIR \
+         --address ':<%= p("port") %>' \
+         ${STORE_DIR} \
+         >> ${LOG_DIR}/minio-dist.stdout.log \
+         2>> ${LOG_DIR}/minio-dist.stderr.log
+    #          <% link("minio").instances.map { |instance| %> "http://<%= instance.address %>${STORE_DIR}/" <% } %> \
+
+    ;;
+
+  stop)
+    kill -9 `cat $PIDFILE`
+    rm -f $PIDFILE
+
+    ;;
+
+  *)
+    echo "Usage: ctl {start|stop}" ;;
+
+esac

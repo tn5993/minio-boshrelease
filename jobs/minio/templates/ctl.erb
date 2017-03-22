@@ -15,7 +15,11 @@ case $1 in
 
     cd /var/vcap/packages/minio
 
-    exec ./minio -C $CONFIG_DIR server --address ':<%= p("port") %>' <%= p("svr_args") %>
+    exec ./minio server -C $CONFIG_DIR \
+         --address ':<%= p("port") %>' \
+         <%= p("svr_args") %> \
+         >> ${LOG_DIR}/minio-dist.stdout.log \
+         2>> ${LOG_DIR}/minio-dist.stderr.log
 
     ;;
 
