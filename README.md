@@ -1,13 +1,20 @@
-# .bosh-minio-release
-Temporary repo for developing a Bosh Minio release.
+# BOSH Minio Release
 
-# How to use this release
+A BOSH release of Minio Object Storage Server. For more information
+about Minio visit the repo [here](https://github.com/minio/minio).
+
+This release can be used to deploy Minio in standalone, single-node
+mode as well as in distributed mode on multiple nodes.
+
+# How to try out this release
+
+The following describes trying out the release on your local system
+using BOSH Lite.
 
 ## 0. Install Bosh CLI and BOSH Lite
 
-Install bosh-lite
-from [here](https://github.com/cloudfoundry/bosh-lite) along with
-bosh_cli (also described in the link).
+Install bosh-lite and bosh_cli as
+described [here](https://github.com/cloudfoundry/bosh-lite).
 
 After setting up the VM with bosh-lite, run the `bin/add-route` script
 to add routes to access your VMs. The script is present in the
@@ -96,7 +103,7 @@ mc ls boshminio{1..4} # List all the 4 minio endpoints. Should see the
                       # bucket printed four times.
 ```
 
-# How to update this release with a newer version of Minio binary
+# How to update this release with a newer version of Minio
 
 The latest version of the Minio binary for amd64 Linux is available at
 https://dl.minio.io/server/minio/release/linux-amd64/
