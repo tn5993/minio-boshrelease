@@ -1,9 +1,0 @@
----
-minio/minio:
-  object_id: 385c192c-b8e0-4834-b72c-2a4872369e51
-  sha: ac30225fce28c74535ea8b8664b6193ebffc754e
-  size: 26603530
-minio.RELEASE.2017-03-16T21-50-32Z/minio:
-  object_id: 79cffc5c-7171-4ca8-9da9-f26cd2fde354
-  sha: ac30225fce28c74535ea8b8664b6193ebffc754e
-  size: 26603530
