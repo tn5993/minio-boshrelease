@@ -7,3 +7,7 @@ minio.RELEASE.2017-04-25T01-27-49Z/minio:
   object_id: f0d4265e-5124-48f1-b148-3df101e56a79
   sha: 970d804342e128be1327f526d68f2e56f461b0f8
   size: 16700160
+minio.RELEASE.2017-05-05T01-14-51Z/minio:
+  object_id: 5a97007c-521e-45b7-a34d-e25d6303773d
+  sha: 0a0910d63097076ec73bcae10cefc43d19dfd142
+  size: 17832256
