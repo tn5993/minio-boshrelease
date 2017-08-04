@@ -4,14 +4,17 @@
 
 To get started from scratch with the BOSH Minio release locally, you can follow the steps below starting with installing `bosh-lite`. If you already have a BOSH installation available, you can jump straight to the [Create and upload BOSH release section](#create).
 
+A list of available BOSH releases for minio and their actual Minio
+version value is present at the end.
+
 ## Install `bosh-lite` and `bosh_cli`
 
-- bosh-lite installation [instructions](https://github.com/cloudfoundry/bosh-lite/blob/master/README.md). 
+- bosh-lite installation [instructions](https://github.com/cloudfoundry/bosh-lite/blob/master/README.md).
 - bosh_cli installation [instructions](http://bosh.io/docs/bosh-cli.html).
 
 ## Upload stemcell to BOSH
 
-Stemcell is a versioned Operating System image wrapped with IaaS specific packaging. You'll need to provide the bosh-lite Warden stemcell. You can download it from 
+Stemcell is a versioned Operating System image wrapped with IaaS specific packaging. You'll need to provide the bosh-lite Warden stemcell. You can download it from
 [here](https://s3.amazonaws.com/bosh-core-stemcells/warden/bosh-stemcell-3363.12-warden-boshlite-ubuntu-trusty-go_agent.tgz).
 
 Once downloaded, use the command below to upload it to your VM:
@@ -55,7 +58,7 @@ Then run the deploy command:
 bosh deploy
 ```
 
-With the default settings (in [example manifest](https://github.com/minio/minio-boshrelease/blob/master/manifests/manifest-fs.yml)), you should be able to access the minio server at `http://10.244.0.2:9001`. 
+With the default settings (in [example manifest](https://github.com/minio/minio-boshrelease/blob/master/manifests/manifest-fs.yml)), you should be able to access the minio server at `http://10.244.0.2:9001`.
 
 Test with the [mc](https://github.com/minio/mc) tool:
 
@@ -85,3 +88,13 @@ mc mb boshminio1/bucket # Create a bucket
 mc ls boshminio{1..4} # List all the 4 minio endpoints. Should see the
                       # bucket printed four times.
 ```
+
+## Available Releases
+
+| Release File | Minio Version |
+| :---- | :--- |
+| release/minio/minio-1.yml | `minio.RELEASE.2017-03-16T21-50-32Z` |
+| release/minio/minio-2.yml | `minio.RELEASE.2017-04-25T01-27-49Z` |
+| release/minio/minio-3.yml | `minio.RELEASE.2017-05-05T01-14-51Z` |
+| release/minio/minio-4.yml | `minio.RELEASE.2017-06-13T19-01-01Z` |
+| release/minio/minio-5.yml | `minio.RELEASE.2017-07-24T18-27-35Z` |
