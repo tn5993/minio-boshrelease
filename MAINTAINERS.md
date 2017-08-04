@@ -131,3 +131,48 @@ git add .final_builds/packages/minio.RELEASE.2017-06-13T19-01-01Z/
 git releases/minio/minio-4.yml
 git commit -m 'Publish release minio.RELEASE.2017-06-13T19-01-01Z'
 ```
+
+## How to sanity check a BOSH release
+
+The aim here is to try and create a release tarball like how a user
+may do. This is done by starting from a vanilla ubuntu docker image,
+and installing each required component:
+
+1. Create a Dockerfile with (both) bosh cli's installed:
+
+``` dockerfile
+FROM ubuntu
+
+RUN apt update && \
+    apt-get install -y build-essential ruby ruby-dev libxml2-dev \
+    libsqlite3-dev libxslt1-dev libpq-dev libmysqlclient-dev zlib1g-dev git wget
+
+RUN gem install bosh_cli --no-ri --no-rdoc
+
+RUN wget -q -O /usr/local/bin/bosh2 \
+    https://s3.amazonaws.com/bosh-cli-artifacts/bosh-cli-2.0.28-linux-amd64
+
+RUN chmod +x /usr/local/bin/bosh2
+
+```
+2. Build docker image, launch container by running a shell, and clone
+   the release:
+
+``` shell
+docker build -t donatello/minio-bosh-test .
+docker run --rm -it donatello/minio-bosh-test /bin/bash
+# Inside the container:
+git clone https://github.com/minio/minio-boshrelease.git
+cd minio-boshrelease
+```
+
+3. Try making a tarball from the release:
+
+``` shell
+# Replace '3' with whatever is the latest below
+bosh create release releases/minio/minio-3.yml --with-tarball
+# or with bosh v2:
+bosh2 create-release --tarball=/tmp/release.tgz releases/minio/minio-3.yml
+```
+
+In either case, the command should work and a tarball should be created.
