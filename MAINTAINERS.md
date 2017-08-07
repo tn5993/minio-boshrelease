@@ -58,7 +58,7 @@ or any other editor created backup files.
 ### Update blob for new package
 
 ``` shell
-bosh-cli add-blob /tmp/minio ${MINIO_BIN_NAME}
+bosh-cli add-blob /tmp/minio ${MINIO_BIN_NAME}/minio
 ```
 
 ### Update `minio-server` job
@@ -95,25 +95,43 @@ bosh-cli remove-blob minio.RELEASE.2017-03-16T21-50-32Z/minio
 
 ### Try it out
 
+#### Setting up bosh-lite with boshv2
+
+https://bosh.io/docs/bosh-lite
+
+Follow install steps to get the Bosh director running locally on
+VirtualBox.
+
+After performing those steps also run:
+
+``` shell
+sudo route add -net 10.244.0.0/16 gw 192.168.50.6
+```
+
+to be able to ssh/access Minio inside the VM.
+
+#### Trying/Testing release
+
 Commit changes to git before testing the candidate release:
 
 ``` shell
 git commit -a -m 'Add files for new release'
-bosh create release --force
-bosh upload release # also upload stemcell if needed
-bosh deployment manifests/manifest-fs.yml # Set manifest
-bosh deploy
+
+# Create release
+bosh-cli create-release --force
+
+# Upload above created release to VM:
+bosh-cli -e vbox upload-release # upload release
+
+# Upload stem-cell step:
+bosh-cli -e vbox upload-stemcell \
+    https://bosh.io/d/stemcells/bosh-warden-boshlite-ubuntu-trusty-go_agent?v=3421.9 \
+    --sha1 1396d7877204e630b9e77ae680f492d26607461d
+
+# Deploy to VM step:
+bosh-cli -e vbox --deployment minio-singlenode-deploy deploy manifests/manifest-fs.yml
+
 ```
-
-To test if the deployment worked - we need to connect to the deployed
-Minio instance inside the bosh-lite Vagrant VM. Run the following
-script from the bosh-lite repo directory to enable network access:
-
-``` shell
-bin/add-route
-```
-
-It will ask for sudo permission to add a network route.
 
 Now, we can attempt to access the instance via mc:
 
@@ -130,7 +148,7 @@ If everything is working as expected, upload blobs for final release
 and commit:
 
 ``` shell
-bosh upload blobs # This requires you to configure s3 creds in config/private.yml
+bosh-cli upload-blobs # This requires you to configure s3 creds in config/private.yml
 git commit -a -m 'Add blobs'
 ```
 
@@ -138,7 +156,8 @@ And create the final release, and commit files it generates. Example
 commands:
 
 ``` shell
-bosh create release --final
+bosh-cli create-release --final
+
 git add .final_builds/jobs/minio-server/index.yml
 git add releases/minio/index.yml
 git add .final_builds/packages/minio.RELEASE.2017-06-13T19-01-01Z/
@@ -146,9 +165,54 @@ git releases/minio/minio-4.yml
 git commit -m 'Publish release minio.RELEASE.2017-06-13T19-01-01Z'
 ```
 
+All done!
 
+## How to sanity check a BOSH release
 
-## How to update this release with a newer version of Minio
+The aim here is to try and create a release tarball like how a user
+may do. This is done by starting from a vanilla ubuntu docker image,
+and installing each required component:
+
+1. Create a Dockerfile with (both) bosh cli's installed:
+
+``` dockerfile
+FROM ubuntu
+
+RUN apt update && \
+    apt-get install -y build-essential ruby ruby-dev libxml2-dev \
+    libsqlite3-dev libxslt1-dev libpq-dev libmysqlclient-dev zlib1g-dev git wget
+
+RUN gem install bosh_cli --no-ri --no-rdoc
+
+RUN wget -q -O /usr/local/bin/bosh2 \
+    https://s3.amazonaws.com/bosh-cli-artifacts/bosh-cli-2.0.28-linux-amd64
+
+RUN chmod +x /usr/local/bin/bosh2
+
+```
+2. Build docker image, launch container by running a shell, and clone
+   the release:
+
+``` shell
+docker build -t donatello/minio-bosh-test .
+docker run --rm -it donatello/minio-bosh-test /bin/bash
+# Inside the container:
+git clone https://github.com/minio/minio-boshrelease.git
+cd minio-boshrelease
+```
+
+3. Try making a tarball from the release:
+
+``` shell
+# Replace '3' with whatever is the latest below
+bosh create release releases/minio/minio-3.yml --with-tarball
+# or with bosh v2:
+bosh2 create-release --tarball=/tmp/release.tgz releases/minio/minio-3.yml
+```
+
+In either case, the command should work and a tarball should be created.
+
+## OLDER INFO: How to update this release with a newer version of Minio with Bosh V1 (DEPRECATED)
 
 The latest version of the Minio binary for amd64 Linux is available at
 https://dl.minio.io/server/minio/release/linux-amd64/
@@ -286,48 +350,3 @@ git add .final_builds/packages/minio.RELEASE.2017-06-13T19-01-01Z/
 git releases/minio/minio-4.yml
 git commit -m 'Publish release minio.RELEASE.2017-06-13T19-01-01Z'
 ```
-
-## How to sanity check a BOSH release
-
-The aim here is to try and create a release tarball like how a user
-may do. This is done by starting from a vanilla ubuntu docker image,
-and installing each required component:
-
-1. Create a Dockerfile with (both) bosh cli's installed:
-
-``` dockerfile
-FROM ubuntu
-
-RUN apt update && \
-    apt-get install -y build-essential ruby ruby-dev libxml2-dev \
-    libsqlite3-dev libxslt1-dev libpq-dev libmysqlclient-dev zlib1g-dev git wget
-
-RUN gem install bosh_cli --no-ri --no-rdoc
-
-RUN wget -q -O /usr/local/bin/bosh2 \
-    https://s3.amazonaws.com/bosh-cli-artifacts/bosh-cli-2.0.28-linux-amd64
-
-RUN chmod +x /usr/local/bin/bosh2
-
-```
-2. Build docker image, launch container by running a shell, and clone
-   the release:
-
-``` shell
-docker build -t donatello/minio-bosh-test .
-docker run --rm -it donatello/minio-bosh-test /bin/bash
-# Inside the container:
-git clone https://github.com/minio/minio-boshrelease.git
-cd minio-boshrelease
-```
-
-3. Try making a tarball from the release:
-
-``` shell
-# Replace '3' with whatever is the latest below
-bosh create release releases/minio/minio-3.yml --with-tarball
-# or with bosh v2:
-bosh2 create-release --tarball=/tmp/release.tgz releases/minio/minio-3.yml
-```
-
-In either case, the command should work and a tarball should be created.
