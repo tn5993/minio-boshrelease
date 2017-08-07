@@ -1,5 +1,0 @@
-# abort script on any command that exits with a non zero value
-set -e
-
-cp -a minio.RELEASE.2017-07-24T18-27-35Z/minio ${BOSH_INSTALL_TARGET}
-chmod +x ${BOSH_INSTALL_TARGET}/minio
