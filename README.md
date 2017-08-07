@@ -93,8 +93,9 @@ mc ls boshminio{1..4} # List all the 4 minio endpoints. Should see the
 
 | Release File | Minio Version |
 | :---- | :--- |
-| release/minio/minio-1.yml | `minio.RELEASE.2017-03-16T21-50-32Z` |
-| release/minio/minio-2.yml | `minio.RELEASE.2017-04-25T01-27-49Z` |
-| release/minio/minio-3.yml | `minio.RELEASE.2017-05-05T01-14-51Z` |
-| release/minio/minio-4.yml | `minio.RELEASE.2017-06-13T19-01-01Z` |
+| release/minio/minio-6.yml | `minio.RELEASE.2017-08-05T00-00-53Z` |
 | release/minio/minio-5.yml | `minio.RELEASE.2017-07-24T18-27-35Z` |
+| release/minio/minio-4.yml | `minio.RELEASE.2017-06-13T19-01-01Z` |
+| release/minio/minio-3.yml | `minio.RELEASE.2017-05-05T01-14-51Z` |
+| release/minio/minio-2.yml | `minio.RELEASE.2017-04-25T01-27-49Z` |
+| release/minio/minio-1.yml | `minio.RELEASE.2017-03-16T21-50-32Z` |
