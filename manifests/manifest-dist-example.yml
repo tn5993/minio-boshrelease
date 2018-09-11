@@ -1,5 +1,5 @@
 ---
-name: ((minio_deployment_name))
+name: ((deployment_name))
 
 releases:
 - name: minio
@@ -32,7 +32,7 @@ instance_groups:
       port: 9000
   networks:
   - name: default
-  vm_type: default
+  vm_type: large
   persistent_disk_type: 2048
   stemcell: default
 
