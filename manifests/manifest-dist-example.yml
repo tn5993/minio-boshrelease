@@ -4,6 +4,8 @@ name: ((deployment_name))
 releases:
 - name: minio
   version: latest
+  url: https://bosh.io/d/github.com/minio/minio-boshrelease?v=2018-07-31T02-11-47Z
+  sha1: 37346ca5abd999b8ab068ca6c6ef4eb1f6f72991
 
 stemcells:
 - alias: default
